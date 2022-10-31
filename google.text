@@ -1,0 +1,145 @@
+# Steps to create google sheet api
+
+# Step 1: Create a new project on the Google Cloud Console
+
+# Step2: Add the API's to your project
+
+# Step 3: Create a Service Account
+	''' Go to the credentials section by clicking on Credentials.
+	At the top, click on Create Credentials.
+	On clicking Create Credentials, you will be provided with various options credentials,
+	but we will use a service account to interact with the Google Sheet for this blog.
+	So go ahead and click on Service account.
+	On creating a service account, you will have to fill in some details for the service account.
+	Here I have added the service account's name. After entering all the details,
+	go ahead and click CREATE AND CONTINUE.
+	Now that the account is created, it's time to assign a role to the account.'''
+	
+# Step4: Get the Credentials
+
+	Click on the Service account you just created.
+	At the top, click on KEYS.
+	Click on ADD KEY and click on Create a new key.
+	On creating the key, you will be provided with options for the key type.
+	Just go ahead and click on JSON.
+
+# Step5: Add the Google Sheets API
+
+	Go to the API and overview.
+	Go to Enable API and services.
+	Please search for the Google Sheets API and enable it.
+
+# Step6: Install the Gspread Library
+
+pip install gspread oauth2client
+
+# Step7: Add the service account email to your Google Sheet
+	Go to the JSON file you created and get the service account email address.
+	After getting the email address, go to your Google Sheet and click on the SHARE button.
+
+
+
+#python script
+
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from pprint import pprint as pp
+
+
+scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',
+	"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+
+creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json",scope)client = gspread.authorize(creds)
+
+sheet = client.open("Students Marks ").sheet1   
+data = sheet.get_all_records() 
+pp(data)
+
+row = sheet.row_values(3)
+pp(row)
+col = sheet.col_values(3)  
+pp(col)
+
+cell = sheet.cell(1,2).value 
+pp(cell)
+
+insertRow = ["Zayn","Malik",12,20]
+sheet.insert_row(insertRow,6)
+print("The row has been added")
+
+sheet.delete_row(2)
+pp("The row has been deleted")
+
+
+
+
+
+
+
+#install pip3 if you don't have already
+sudo apt-get install python3-pip
+
+#instal virtualenv
+sudo pip3 install virtualenv
+
+#build new virtualenv
+cd $YOUR_PROJECT_DIRECTORY
+ virtualenv .venv  
+
+#to activate your virtualev
+source .venv/bin/activate
+
+#to deactivate your virtualev
+deactivate
+
+# To install libraries
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+pip install --upgrade requests
+pip install google-oauth2l
+
+#to handle google sheet api
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+
+# to create credentials of google sheet api
+SERVICE_ACCOUNT_FILE = 'helpers/telebank-sheet-6f830d59d9f8.json' 
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+creds = service_account.Credentials.from_service_account_file(config.SERVICE_ACCOUNT_FILE, scopes = config.SCOPES)
+
+# Call the Sheets API
+service = build('sheets', 'v4', credentials=creds)
+sheet = service.spreadsheets()
+
+#Another sample o create google sheet api credentials 
+credentials = Credentials(
+            token=token,
+            refresh_token=refresh_token,
+            token_uri="https://www.googleapis.com/oauth2/v3/token", 
+            client_id=client_id,
+            client_secret=client_secret,
+        )
+
+drive_service = build('drive', "v3", credentials=credentials)
+
+# To fetch all the data of google sheet
+SAMPLE_SPREADSHEET_ID = '1BOl3dHF5Ye8crywk5ErT7JYyidYCSs1q3W1Cqzvgd2Q'
+result = sheet.values().get(spreadsheetId = SAMPLE_SPREADSHEET_ID, range ="Sheetname").execute()
+get_values = result.get('values' , [])
+
+#Updating the record in Google Sheet
+records_to_update = self.data #value to upload
+sheet.values().update(spreadsheetId = SAMPLE_SPREADSHEET_ID, range= sheet_name, 
+        valueInputOption="USER_ENTERED", body={"values":records_to_update}).execute()
+
+#Clearing records from Google Sheet
+
+sheet.values().clear(spreadsheetId = SAMPLE_SPREADSHEET_ID,
+						 range="sheetname and range").execute()
+
+
+
+
+
+
